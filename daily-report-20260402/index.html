@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A股大盘每日复盘 - 2026年4月2日</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    :root {
+      --bg-page: #FFFFFF;
+      --bg-card: #F8F8F8;
+      --bg-header: #1A237E;
+      --text-primary: #212121;
+      --text-secondary: #616161;
+      --text-light: #FFFFFF;
+      --up: #E53935;
+      --down: #43A047;
+      --neutral: #757575;
+      --accent: #1565C0;
+      --warning: #E65100;
+      --border: #E0E0E0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    .report-header {
+      background: var(--bg-header);
+      color: var(--text-light);
+      padding: 40px 48px;
+      border-bottom: 4px solid var(--up);
+    }
+    .report-header .report-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+    .report-header .report-subtitle { font-size: 16px; opacity: 0.85; margin-bottom: 16px; }
+    .report-header .report-meta { font-size: 13px; opacity: 0.8; }
+    .report-header .report-meta span { margin-right: 24px; }
+    .price-bar {
+      background: #F8F8F8;
+      border-bottom: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .price-item { display: flex; flex-direction: column; }
+    .price-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .price-value { font-size: 22px; font-weight: 700; }
+    .price-change { font-size: 14px; font-weight: 600; margin-top: 2px; }
+    .price-value.up, .price-change.up { color: var(--up); }
+    .price-value.down, .price-change.down { color: var(--down); }
+    .content { padding: 0 48px 48px; }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 44px 0 20px 0;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-num {
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 3px;
+    }
+    p { margin-bottom: 16px; }
+    strong { color: var(--text-primary); }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 20px 0 28px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 24px;
+    }
+    .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; }
+    .metric-value { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+    .metric-change { font-size: 14px; font-weight: 600; }
+    .metric-change.up { color: var(--up); }
+    .metric-change.down { color: var(--down); }
+    .chart-container {
+      width: 100%;
+      margin: 24px 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+    }
+    .chart-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 16px; text-transform: uppercase; }
+    .chart-wrapper { width: 100%; height: 320px; }
+    .source-note { font-size: 11px; color: var(--text-secondary); margin-top: 12px; font-style: italic; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    th { background: #1A237E; color: white; padding: 14px 16px; text-align: left; font-weight: 600; }
+    td { padding: 13px 16px; text-align: right; border-bottom: 1px solid var(--border); }
+    td:first-child { text-align: left; }
+    tr:nth-child(even) td { background: #FAFAFA; }
+    tr:last-child td { border-bottom: none; }
+    .up { color: var(--up); font-weight: 600; }
+    .down { color: var(--down); font-weight: 600; }
+    .conclusion-box {
+      background: var(--bg-card);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 24px 28px;
+      margin: 24px 0;
+    }
+    .conclusion-title { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 12px; text-transform: uppercase; }
+    .score-card {
+      background: linear-gradient(135deg, var(--bg-card) 0%, #E8EAF6 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .score-value { font-size: 56px; font-weight: 800; color: var(--accent); line-height: 1; }
+    .score-max { font-size: 24px; color: var(--text-secondary); }
+    .score-desc { font-size: 15px; margin-top: 12px; color: var(--warning); font-weight: 600; }
+    .disclaimer {
+      margin: 48px 0 0;
+      padding: 20px 24px;
+      background: #FFF8E1;
+      border: 1px solid #FFE082;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #795548;
+      line-height: 1.8;
+    }
+    .footer {
+      margin-top: 48px;
+      padding: 24px 48px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    @media (max-width: 768px) {
+      .report-header, .content, .price-bar, .footer { padding-left: 20px; padding-right: 20px; }
+      .chart-wrapper { height: 260px; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-header">
+    <div class="report-title">A股大盘每日复盘</div>
+    <div class="report-subtitle">技术面分析 · 量价分析 · 趋势研判</div>
+    <div class="report-meta">
+      <span>📅 2026年4月2日</span>
+      <span>🕐 收盘后</span>
+      <span>📊 数据来源：东方财富</span>
+    </div>
+  </div>
+
+  <div class="price-bar">
+    <div class="price-item">
+      <span class="price-label">上证指数</span>
+      <span class="price-value">3,919.29</span>
+      <span class="price-change down">▼ 0.74%</span>
+    </div>
+    <div class="price-item">
+      <span class="price-label">深证成指</span>
+      <span class="price-value">13,486.94</span>
+      <span class="price-change down">▼ 1.60%</span>
+    </div>
+    <div class="price-item">
+      <span class="price-label">创业板指</span>
+      <span class="price-value">3,172.65</span>
+      <span class="price-change down">▼ 2.31%</span>
+    </div>
+    <div class="price-item">
+      <span class="price-label">沪深300</span>
+      <span class="price-value">4,478.91</span>
+      <span class="price-change down">▼ 1.04%</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section-title"><span class="section-num">01</span>市场概况</div>
+    <p>今日A股三大指数全线收跌，其中创业板指领跌(-2.31%)，上证指数跌幅最小(-0.74%)。成交额较近期有所萎缩，显示市场情绪有所降温，但整体仍在合理区间内。</p>
+    
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">上证收盘</div>
+        <div class="metric-value">3,919</div>
+        <div class="metric-change down">▼ 0.74%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">深证收盘</div>
+        <div class="metric-value">13,487</div>
+        <div class="metric-change down">▼ 1.60%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">创业板收盘</div>
+        <div class="metric-value">3,173</div>
+        <div class="metric-change down">▼ 2.31%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">上证成交额</div>
+        <div class="metric-value">8,119亿</div>
+        <div class="metric-change">全市场活跃</div>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="section-num">02</span>技术面分析</div>
+    
+    <p><strong>均线系统：</strong></p>
+    <table>
+      <thead>
+        <tr><th>指数</th><th>收盘价</th><th>5日均线</th><th>10日均线</th><th>均线位置</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>上证指数</td><td>3,919.29</td><td>3,913.30</td><td>3,915.65</td><td class="up">▲ 高于均线</td></tr>
+        <tr><td>深证成指</td><td>13,486.94</td><td>13,655.52</td><td>13,672.84</td><td class="down">▼ 低于均线</td></tr>
+      </tbody>
+    </table>
+
+    <div class="chart-container">
+      <div class="chart-title">上证指数近10日走势</div>
+      <div id="chart-sh" class="chart-wrapper"></div>
+      <div class="source-note">数据来源：东方财富</div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">深证成指近10日走势</div>
+      <div id="chart-sz" class="chart-wrapper"></div>
+      <div class="source-note">数据来源：东方财富</div>
+    </div>
+
+    <p><strong>趋势判断：</strong></p>
+    <table>
+      <thead>
+        <tr><th>指数</th><th>5日累计涨跌</th><th>短期趋势</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>上证指数</td><td class="up">+0.79%</td><td class="up">▲ 强势</td></tr>
+        <tr><td>深证成指</td><td class="down">-0.83%</td><td class="down">▼ 走弱</td></tr>
+        <tr><td>创业板指</td><td class="down">-2.31%</td><td class="down">▼ 承压</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title"><span class="section-num">03</span>成交量分析</div>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">今日成交额</div>
+        <div class="metric-value">8,119亿</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">5日均量</div>
+        <div class="metric-value">8,481亿</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">量比</div>
+        <div class="metric-value down">89.8%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">市场状态</div>
+        <div class="metric-value down">缩量</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">上证指数成交量对比（近10日）</div>
+      <div id="chart-vol" class="chart-wrapper"></div>
+      <div class="source-note">数据来源：东方财富</div>
+    </div>
+
+    <p><strong>解读：</strong>缩量下跌通常意味着卖盘不积极，非恐慌式抛售，可能是正常的技术性回调。</p>
+
+    <div class="section-title"><span class="section-num">04</span>综合评分</div>
+
+    <div class="score-card">
+      <div class="score-value">4<span class="score-max">/10</span></div>
+      <div class="score-desc">⚠️ 偏弱但未破位</div>
+    </div>
+
+    <p><strong>多维度评估：</strong></p>
+    <table>
+      <thead>
+        <tr><th>评估维度</th><th>结果</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>指数跌幅</td><td class="down">⚠️</td><td>创业板跌幅较大(-2.31%)</td></tr>
+        <tr><td>成交量</td><td class="up">✅</td><td>缩量，抛压不重</td></tr>
+        <tr><td>均线支撑</td><td class="up">✅</td><td>上证仍站均线</td></tr>
+        <tr><td>短期趋势</td><td class="up">✅</td><td>近5日整体上涨</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title"><span class="section-num">05</span>研判结论</div>
+
+    <div class="conclusion-box">
+      <div class="conclusion-title">市场定性</div>
+      <p><strong>今日A股属于正常技术性调整，非趋势性下跌。</strong></p>
+    </div>
+
+    <p><strong>支撑依据：</strong></p>
+    <ul style="margin: 16px 0; padding-left: 24px;">
+      <li style="margin-bottom: 8px;">缩量调整，量能萎缩至90%以下</li>
+      <li style="margin-bottom: 8px;">上证指数仍站稳5日/10日均线</li>
+      <li style="margin-bottom: 8px;">近5日累计仍为正收益</li>
+      <li style="margin-bottom: 8px;">创业板下跌但未出现跌停潮</li>
+    </ul>
+
+    <p><strong>明日展望：</strong></p>
+    <table>
+      <thead>
+        <tr><th>情景</th><th>条件</th><th>应对</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="up">乐观</td><td>缩量企稳，权重股护盘</td><td>可能重启升势</td></tr>
+        <tr><td class="down">悲观</td><td>放量破位下跌</td><td>需考虑减仓</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>关注重点：</strong></p>
+    <table>
+      <thead>
+        <tr><th>指标</th><th>关注点位</th><th>意义</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>上证指数</td><td>3,900</td><td>整数关口</td></tr>
+        <tr><td>创业板指</td><td>3,100</td><td>心理支撑</td></tr>
+        <tr><td>成交量</td><td>万亿以上</td><td>市场活跃度</td></tr>
+      </tbody>
+    </table>
+
+    <div class="disclaimer">
+      <strong>⚠️ 风险提示：</strong>本研报仅基于公开市场数据的技术分析，仅供参考，不构成任何投资建议。股市有风险，投资需谨慎。
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：东方财富妙想数据 | 🤖 分析工具：Minis AI「蛋挞」</p>
+    <p style="margin-top: 8px;">📅 报告生成时间：2026年4月2日</p>
+  </div>
+
+  <script>
+    const UP = '#E53935', DOWN = '#43A047', ACCENT = '#1565C0';
+
+    // 上证数据
+    const shData = [
+      {date:'03-19',close:4006.55,change:-1.39},{date:'03-20',close:3957.05,change:-1.24},
+      {date:'03-23',close:3813.28,change:-3.63},{date:'03-24',close:3881.28,change:1.78},
+      {date:'03-25',close:3931.84,change:1.30},{date:'03-26',close:3889.08,change:-1.09},
+      {date:'03-27',close:3913.72,change:0.63},{date:'03-30',close:3923.29,change:0.24},
+      {date:'03-31',close:3891.86,change:-0.80},{date:'04-01',close:3948.55,change:1.46},
+      {date:'04-02',close:3919.29,change:-0.74}
+    ];
+
+    // 深证数据
+    const szData = [
+      {date:'03-19',close:13901.57,change:-2.02},{date:'03-20',close:13866.20,change:-0.25},
+      {date:'03-23',close:13345.51,change:-3.76},{date:'03-24',close:13536.56,change:1.43},
+      {date:'03-25',close:13801.00,change:1.95},{date:'03-26',close:13606.44,change:-1.41},
+      {date:'03-27',close:13760.37,change:1.13},{date:'03-30',close:13726.19,change:-0.25},
+      {date:'03-31',close:13478.06,change:-1.81},{date:'04-01',close:13706.52,change:1.70},
+      {date:'04-02',close:13486.94,change:-1.60}
+    ];
+
+    // 成交量数据
+    const volData = [
+      {date:'03-20',vol:9649},{date:'03-23',vol:10860},{date:'03-24',vol:9314},
+      {date:'03-25',vol:9679},{date:'03-26',vol:8484},{date:'03-27',vol:7997},
+      {date:'03-30',vol:8398},{date:'03-31',vol:8919},{date:'04-01',vol:8973},
+      {date:'04-02',vol:8119}
+    ];
+
+    // K线图表
+    function createKLineChart(id, data, title) {
+      const chart = echarts.init(document.getElementById(id));
+      chart.setOption({
+        tooltip: {trigger:'axis',formatter:p=>`${p[0].name}<br/>收盘:${p[0].value[1].toFixed(2)}<br/>涨跌:${data[p[0].dataIndex].change>0?'+':''}${data[p[0].dataIndex].change}%`},
+        grid:{left:'3%',right:'4%',bottom:'3%',top:'10%',containLabel:true},
+        xAxis:{type:'category',data:data.map(d=>d.date),axisLine:{lineStyle:{color:'#E0E0E0'}},axisLabel:{color:'#616161'}},
+        yAxis:{type:'value',scale:true,axisLine:{lineStyle:{color:'#E0E0E0'}},splitLine:{lineStyle:{color:'#F0F0F0'}},axisLabel:{color:'#616161'}},
+        series:[{
+          name:title,type:'line',smooth:true,symbol:'circle',symbolSize:6,
+          lineStyle:{width:2,color:ACCENT},
+          itemStyle:{color:p=>data[p.dataIndex].change>=0?UP:DOWN},
+          areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(21,101,192,0.2)'},{offset:1,color:'rgba(21,101,192,0)' }])},
+          data:data.map((d,i)=>[i,d.close])
+        }]
+      });
+      return chart;
+    }
+
+    // 成交量图表
+    const chartVol = echarts.init(document.getElementById('chart-vol'));
+    chartVol.setOption({
+      tooltip:{trigger:'axis',formatter:p=>`${p[0].name}<br/>成交额:${p[0].value}亿`},
+      grid:{left:'3%',right:'4%',bottom:'3%',top:'10%',containLabel:true},
+      xAxis:{type:'category',data:volData.map(d=>d.date),axisLine:{lineStyle:{color:'#E0E0E0'}},axisLabel:{color:'#616161'}},
+      yAxis:{type:'value',axisLine:{lineStyle:{color:'#E0E0E0'}},splitLine:{lineStyle:{color:'#F0F0F0'}},axisLabel:{color:'#616161',formatter:'{value}亿'}},
+      series:[{
+        name:'成交额',type:'bar',barWidth:'60%',
+        itemStyle:{color:p=>volData[p.dataIndex].vol<8481?DOWN:ACCENT,borderRadius:[4,4,0,0]},
+        data:volData.map(d=>d.vol),
+        markLine:{silent:true,lineStyle:{color:'#FF9800',type:'dashed'},data:[{yAxis:8481}],label:{formatter:'5日均量',position:'end'}}
+      }]
+    });
+
+    createKLineChart('chart-sh', shData, '上证指数');
+    createKLineChart('chart-sz', szData, '深证成指');
+    window.addEventListener('resize', ()=>{chartVol&&chartVol.resize()});
+  </script>
+</body>
+</html>
